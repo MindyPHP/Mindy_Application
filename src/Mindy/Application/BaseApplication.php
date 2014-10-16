@@ -124,12 +124,6 @@ abstract class BaseApplication
      */
     public $locale = [];
     /**
-     * @var array the behaviors that should be attached to the module.
-     * The behaviors will be attached to the module when {@link init} is called.
-     * Please refer to {@link CModel::behaviors} on how to specify the value of this property.
-     */
-    public $behaviors = [];
-    /**
      * @var array the IDs of the application components that should be preloaded.
      */
     public $preload = [];
