@@ -14,8 +14,8 @@
 
 namespace Mindy\Application;
 
-use Mindy\Base\Exception\Exception;
-use Mindy\Base\Exception\HttpException;
+use Mindy\Exception\Exception;
+use Mindy\Exception\HttpException;
 use Mindy\Base\Interfaces\IApplicationComponent;
 use Mindy\Base\Mindy;
 use Mindy\Base\Module;
@@ -166,7 +166,7 @@ abstract class BaseApplication
      * Please make sure you specify the {@link getBasePath basePath} property in the configuration,
      * which should point to the directory containing all application logic, template and data.
      * If not, the directory will be defaulted to 'protected'.
-     * @throws \Mindy\Base\Exception\Exception
+     * @throws \Mindy\Exception\Exception
      */
     public function __construct($config = null)
     {
@@ -967,7 +967,7 @@ abstract class BaseApplication
      * handling is needed. Otherwise, the {@link getErrorHandler errorHandler}
      * application component will continue processing the error.
      *
-     * @param \Mindy\Base\Exception\Exception $exception
+     * @param \Mindy\Exception\Exception $exception
      */
     public function raiseException(Exception $exception)
     {

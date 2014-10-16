@@ -2,8 +2,8 @@
 
 namespace Mindy\Application;
 
-use Mindy\Base\Exception\Exception;
-use Mindy\Base\Exception\HttpException;
+use Mindy\Exception\Exception;
+use Mindy\Exception\HttpException;
 use Mindy\Base\Mindy;
 use Mindy\Console\ConsoleCommandRunner;
 use Mindy\Helper\Alias;
@@ -93,7 +93,7 @@ class Application extends BaseApplication
     }
 
     /**
-     * @throws \Mindy\Base\Exception\Exception
+     * @throws \Mindy\Exception\Exception
      * @return \Modules\User\Models\User instance the user session information
      */
     public function getUser()
