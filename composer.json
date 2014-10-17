@@ -20,7 +20,10 @@
         "mindy/http": "dev-master",
         "mindy/middleware": "dev-master",
         "mindy/logger": "dev-master",
-        "mindy/router": "dev-master"
+        "mindy/router": "dev-master",
+        "mindy/event": "dev-master",
+        "mindy/security": "dev-master",
+        "mindy/session": "dev-master"
     },
     "require-dev": {
         "satooshi/php-coveralls": "dev-master"

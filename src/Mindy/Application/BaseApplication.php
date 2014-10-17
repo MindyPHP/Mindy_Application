@@ -1067,4 +1067,11 @@ abstract class BaseApplication
         $this->locator = new ServiceLocator();
         $this->setComponents($components);
     }
+
+    public function setComponents($components, $merge = true)
+    {
+        foreach ($components as $name => $component) {
+            $this->locator->set($name, $component);
+        }
+    }
 }

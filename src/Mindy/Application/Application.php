@@ -85,13 +85,6 @@ class Application extends BaseApplication
         return $this->getUrlManager()->parseUrl($this->getRequest());
     }
 
-    public function setComponents($components, $merge = true)
-    {
-        foreach ($components as $name => $component) {
-            $this->locator->set($name, $component);
-        }
-    }
-
     /**
      * @throws \Mindy\Exception\Exception
      * @return \Modules\User\Models\User instance the user session information
@@ -103,11 +96,6 @@ class Application extends BaseApplication
             throw new Exception("Auth component not initialized");
         }
         return $auth->getModel();
-    }
-
-    public function getComponent($id, $createIfNull = true)
-    {
-        return $this->locator->get($id, false);
     }
 
     /**
