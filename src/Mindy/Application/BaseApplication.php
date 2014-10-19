@@ -14,18 +14,18 @@
 
 namespace Mindy\Application;
 
-use Mindy\Exception\Exception;
-use Mindy\Exception\HttpException;
 use Mindy\Base\Interfaces\IApplicationComponent;
 use Mindy\Base\Mindy;
 use Mindy\Base\Module;
 use Mindy\Di\ServiceLocator;
-use Mindy\Locale\Translate;
+use Mindy\Exception\Exception;
+use Mindy\Exception\HttpException;
 use Mindy\Helper\Alias;
 use Mindy\Helper\Collection;
 use Mindy\Helper\Creator;
 use Mindy\Helper\Traits\BehaviorAccessors;
 use Mindy\Helper\Traits\Configurator;
+use Mindy\Locale\Translate;
 
 /**
  * CApplication class file.
@@ -139,11 +139,12 @@ abstract class BaseApplication
     private $_params;
     private $_modules = [];
     private $_moduleConfig = [];
+    private $_componentConfig = [];
 
     /**
      * @var \Mindy\Di\ServiceLocator
      */
-    public $locator;
+    private $_locator;
 
     /**
      * Processes the request.
@@ -203,8 +204,6 @@ abstract class BaseApplication
 
         $this->preinit();
 
-        $this->locator = new ServiceLocator();
-
         $this->initSystemHandlers();
         $this->registerCoreComponents();
 
@@ -213,11 +212,17 @@ abstract class BaseApplication
         $this->preloadComponents();
 
         $this->initEvents();
-
-        $this->signal->handler('\\Mindy\\Base\\Module', 'preConfigure', [$this, 'preConfigure']);
         $this->initModules();
 
         $this->init();
+    }
+
+    public function getLocator()
+    {
+        if ($this->_locator === null) {
+            $this->_locator = new ServiceLocator();
+        }
+        return $this->_locator;
     }
 
     protected function initModules()
@@ -264,7 +269,7 @@ abstract class BaseApplication
         if (!is_string($id)) {
             $id = array_shift($id);
         }
-        return $this->locator->has($id);
+        return $this->getLocator()->has($id);
     }
 
     /**
@@ -277,14 +282,14 @@ abstract class BaseApplication
     public function getComponent($id, $createIfNull = true)
     {
         if ($this->hasComponent($id)) {
-            return $this->locator->get($id);
+            return $this->getLocator()->get($id);
         } elseif (isset($this->_componentConfig[$id]) && $createIfNull) {
             $config = $this->_componentConfig[$id];
             if (!isset($config['enabled']) || $config['enabled']) {
                 Mindy::app()->logger->trace("Loading \"$id\" application component", 'system.CModule');
                 unset($config['enabled']);
                 $component = Creator::createObject($config);
-                $this->locator->set($id, $component);
+                $this->getLocator()->set($id, $component);
                 return $component;
             }
         }
@@ -307,19 +312,19 @@ abstract class BaseApplication
     public function setComponent($id, $component, $merge = true)
     {
         if ($component === null) {
-            $this->locator->clear($id);
+            $this->getLocator()->clear($id);
             return;
         } elseif ($component instanceof IApplicationComponent) {
-            $this->locator->set($id, $component);
+            $this->getLocator()->set($id, $component);
             return;
-        } elseif ($this->locator->has($id)) {
-            if (isset($component['class']) && get_class($this->locator->get($id)) !== $component['class']) {
-                $this->locator->clear($id);
+        } elseif ($this->getLocator()->has($id)) {
+            if (isset($component['class']) && get_class($this->getLocator()->get($id)) !== $component['class']) {
+                $this->getLocator()->clear($id);
                 $this->_componentConfig[$id] = $component; //we should ignore merge here
                 return;
             }
 
-            Creator::configure($this->locator->get($id), $component);
+            Creator::configure($this->getLocator()->get($id), $component);
         } elseif (isset($this->_componentConfig[$id]['class'], $component['class']) && $this->_componentConfig[$id]['class'] !== $component['class']) {
             $this->_componentConfig[$id] = $component; //we should ignore merge here
             return;
@@ -342,7 +347,7 @@ abstract class BaseApplication
      */
     public function getComponents($loadedOnly = true)
     {
-        return $this->locator->getComponents(!$loadedOnly);
+        return $this->getLocator()->getComponents(!$loadedOnly);
     }
 
     /**
@@ -499,10 +504,10 @@ abstract class BaseApplication
         if (empty($args) && strpos($name, 'get') === 0) {
             $tmp = str_replace('get', '', $name);
 
-            if ($this->locator->has($tmp)) {
-                return $this->locator->get($tmp);
-            } elseif ($this->locator->has(lcfirst($tmp))) {
-                return $this->locator->get(lcfirst($tmp));
+            if ($this->getLocator()->has($tmp)) {
+                return $this->getLocator()->get($tmp);
+            } elseif ($this->getLocator()->has(lcfirst($tmp))) {
+                return $this->getLocator()->get(lcfirst($tmp));
             }
         }
 
@@ -511,8 +516,8 @@ abstract class BaseApplication
 
     public function __get($name)
     {
-        if ($this->locator->has($name)) {
-            return $this->locator->get($name);
+        if ($this->getLocator()->has($name)) {
+            return $this->getLocator()->get($name);
         } else {
             return $this->__getInternal($name);
         }
@@ -1064,14 +1069,13 @@ abstract class BaseApplication
             ],
         ];
 
-        $this->locator = new ServiceLocator();
         $this->setComponents($components);
     }
 
     public function setComponents($components, $merge = true)
     {
         foreach ($components as $name => $component) {
-            $this->locator->set($name, $component);
+            $this->getLocator()->set($name, $component);
         }
     }
 }
