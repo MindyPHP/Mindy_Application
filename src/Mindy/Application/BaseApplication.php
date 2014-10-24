@@ -90,6 +90,7 @@ use Mindy\Locale\Translate;
  * @property \Mindy\Cache\Cache $cache The cache application component. Null if the component is not enabled.
  * @property \Mindy\Locale\Translate $translate The application translate component.
  * @property \Mindy\Http\Request $request The request component.
+ * @property \Mindy\Template\Renderer $template The template engine component.
  * @property \Mindy\Router\UrlManager $urlManager The URL manager component.
  * @property \Mindy\Controller\BaseController $controller The currently active controller. Null is returned in this base class.
  * @property string $baseUrl The relative URL for the application.
