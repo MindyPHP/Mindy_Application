@@ -287,7 +287,7 @@ abstract class BaseApplication
         } elseif (isset($this->_componentConfig[$id]) && $createIfNull) {
             $config = $this->_componentConfig[$id];
             if (!isset($config['enabled']) || $config['enabled']) {
-                Mindy::app()->logger->trace("Loading \"$id\" application component", 'system.CModule');
+                Mindy::app()->logger->debug("Loading \"$id\" application component", [], 'di');
                 unset($config['enabled']);
                 $component = Creator::createObject($config);
                 $this->getLocator()->set($id, $component);
@@ -396,7 +396,7 @@ abstract class BaseApplication
         } elseif (isset($this->_moduleConfig[$id])) {
             $config = $this->_moduleConfig[$id];
             if (!isset($config['enabled']) || $config['enabled']) {
-                Mindy::app()->logger->info("Loading \"$id\" module", 'system.base.CModule');
+                Mindy::app()->logger->info("Loading \"$id\" module", [], 'module');
                 $class = $config['class'];
                 unset($config['class'], $config['enabled']);
                 if ($this === Mindy::app()) {
@@ -862,7 +862,7 @@ abstract class BaseApplication
             $message .= "\nHTTP_REFERER=" . $_SERVER['HTTP_REFERER'];
         }
         $message .= "\n---";
-        Mindy::app()->logger->error($message, 'default', ['category' => $category]);
+        Mindy::app()->logger->error($message, ['category' => $category], 'default');
 
         try {
             $this->signal->send($this, 'raiseException', $exception);
