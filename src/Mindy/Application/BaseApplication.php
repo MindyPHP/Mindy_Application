@@ -209,6 +209,7 @@ abstract class BaseApplication
         $this->registerCoreComponents();
 
         $this->configure($config);
+        $this->initTranslate();
         $this->attachBehaviors($this->behaviors);
         $this->preloadComponents();
 
@@ -711,9 +712,17 @@ abstract class BaseApplication
     /**
      * @return object
      */
-    public function getTranslate()
+    protected function initTranslate()
     {
         return Translate::getInstance($this->locale);
+    }
+
+    /**
+     * @return object
+     */
+    public function getTranslate()
+    {
+        return Translate::getInstance();
     }
 
     /**
