@@ -119,7 +119,7 @@ abstract class BaseApplication
     /**
      * @var string the class used to handle errors
      */
-    public $errorHandlerClass = 'Mindy\Base\ErrorHandler';
+    public $errorHandlerClass = '\Mindy\Base\ErrorHandler';
     /**
      * @var array
      */
