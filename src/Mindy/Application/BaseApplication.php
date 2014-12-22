@@ -192,7 +192,7 @@ abstract class BaseApplication
             Alias::set('www', $path);
             unset($config['webPath']);
         } else {
-            Alias::set('www', dirname($_SERVER['SCRIPT_FILENAME']));
+            Alias::set('www', realpath(dirname($_SERVER['SCRIPT_FILENAME'])));
         }
 
         // DEPRECATED
