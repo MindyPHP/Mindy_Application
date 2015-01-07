@@ -2,6 +2,7 @@
 
 namespace Mindy\Application;
 
+use Closure;
 use Mindy\Exception\Exception;
 use Mindy\Exception\HttpException;
 use Mindy\Base\Mindy;
@@ -152,9 +153,13 @@ class Application extends BaseApplication
 
         if ($route) {
             list($handler, $vars) = $route;
-            list($className, $actionName) = $handler;
-            $controller = Creator::createObject($className, time(), $owner === $this ? null : $owner, $this->getComponent('request'));
-            return [$controller, $actionName, array_merge($_GET, $vars)];
+            if ($handler instanceof Closure) {
+                $handler->__invoke($this->getComponent('request'));
+            } else {
+                list($className, $actionName) = $handler;
+                $controller = Creator::createObject($className, time(), $owner === $this ? null : $owner, $this->getComponent('request'));
+                return [$controller, $actionName, array_merge($_GET, $vars)];
+            }
         }
 
         return null;
