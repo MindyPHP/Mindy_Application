@@ -1002,13 +1002,13 @@ abstract class BaseApplication
      */
     protected function initSystemHandlers()
     {
-        if (YII_ENABLE_EXCEPTION_HANDLER || YII_ENABLE_ERROR_HANDLER) {
+        if (MINDY_ENABLE_EXCEPTION_HANDLER || MINDY_ENABLE_ERROR_HANDLER) {
             $errorHandlerClass = $this->errorHandlerClass;
             $handler = new $errorHandlerClass;
-            if (YII_ENABLE_EXCEPTION_HANDLER) {
+            if (MINDY_ENABLE_EXCEPTION_HANDLER) {
                 set_exception_handler([$handler, 'handleException']);
             }
-            if (YII_ENABLE_ERROR_HANDLER) {
+            if (MINDY_ENABLE_ERROR_HANDLER) {
                 set_error_handler([$handler, 'handleError'], error_reporting());
             }
         }
