@@ -4,25 +4,25 @@
     "version": "0.1",
     "license": "BSD-3-Clause",
     "autoload": {
-        "psr-0": {
-            "": "src/"
+        "psr-4": {
+            "Mindy\\Application\\": "src/Mindy/Application"
         }
     },
     "require": {
         "php": ">=5.4",
-        "mindy/exception": "dev-master",
-        "mindy/di": "dev-master",
-        "mindy/helper": "dev-master",
-        "mindy/console": "dev-master",
-        "mindy/locale": "dev-master",
-        "mindy/controller": "dev-master",
-        "mindy/http": "dev-master",
-        "mindy/middleware": "dev-master",
-        "mindy/logger": "dev-master",
-        "mindy/router": "dev-master",
-        "mindy/event": "dev-master",
-        "mindy/security": "dev-master",
-        "mindy/session": "dev-master"
+        "mindy/exception": "0.1",
+        "mindy/di": "0.1",
+        "mindy/helper": "0.1",
+        "mindy/console": "0.1",
+        "mindy/locale": "0.1",
+        "mindy/controller": "0.1",
+        "mindy/http": "0.1",
+        "mindy/middleware": "0.1",
+        "mindy/logger": "0.1",
+        "mindy/router": "0.1",
+        "mindy/event": "0.1",
+        "mindy/security": "0.1",
+        "mindy/session": "0.1"
     },
     "require-dev": {
         "satooshi/php-coveralls": "dev-master"
