@@ -18,7 +18,7 @@
         "mindy/controller": "0.1",
         "mindy/http": "0.1",
         "mindy/middleware": "0.1",
-        "mindy/logger": "0.1",
+        "mindy/logger": "1.0.3",
         "mindy/router": "0.1",
         "mindy/event": "0.1",
         "mindy/security": "0.1",
