@@ -10,19 +10,19 @@
     },
     "require": {
         "php": ">=5.4",
-        "mindy/exception": "0.1",
-        "mindy/di": "0.1",
-        "mindy/helper": "0.1",
-        "mindy/console": "0.1",
-        "mindy/locale": "0.1",
-        "mindy/controller": "0.1",
-        "mindy/http": "0.1",
-        "mindy/middleware": "0.1",
-        "mindy/logger": "1.0.3",
-        "mindy/router": "0.1",
-        "mindy/event": "0.1",
-        "mindy/security": "0.1",
-        "mindy/session": "0.1"
+        "mindy/exception": "0.*",
+        "mindy/di": "0.*",
+        "mindy/helper": "0.*",
+        "mindy/console": "0.*",
+        "mindy/locale": "0.*",
+        "mindy/controller": "0.*",
+        "mindy/http": "0.*",
+        "mindy/middleware": "0.*",
+        "mindy/logger": "1.*",
+        "mindy/router": "0.*",
+        "mindy/event": "0.*",
+        "mindy/security": "0.*",
+        "mindy/session": "0.*"
     },
     "require-dev": {
         "satooshi/php-coveralls": "dev-master"
