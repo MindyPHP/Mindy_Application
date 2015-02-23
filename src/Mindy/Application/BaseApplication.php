@@ -98,7 +98,7 @@ use Mindy\Locale\Translate;
  * @property string $homeUrl The homepage URL.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @package system.base
+ * @package Mindy\Application
  * @since 1.0
  */
 abstract class BaseApplication
