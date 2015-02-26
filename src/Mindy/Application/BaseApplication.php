@@ -923,18 +923,23 @@ abstract class BaseApplication
             $log = "$message ($file:$line)\nStack trace:\n";
             $trace = debug_backtrace();
             // skip the first 3 stacks as they do not tell the error position
-            if (count($trace) > 3)
+            if (count($trace) > 3) {
                 $trace = array_slice($trace, 3);
+            }
             foreach ($trace as $i => $t) {
-                if (!isset($t['file']))
+                if (!isset($t['file'])) {
                     $t['file'] = 'unknown';
-                if (!isset($t['line']))
+                }
+                if (!isset($t['line'])) {
                     $t['line'] = 0;
-                if (!isset($t['function']))
+                }
+                if (!isset($t['function'])) {
                     $t['function'] = 'unknown';
+                }
                 $log .= "#$i {$t['file']}({$t['line']}): ";
-                if (isset($t['object']) && is_object($t['object']))
+                if (isset($t['object']) && is_object($t['object'])) {
                     $log .= get_class($t['object']) . '->';
+                }
                 $log .= "{$t['function']}()\n";
             }
             if (isset($_SERVER['REQUEST_URI'])) {
