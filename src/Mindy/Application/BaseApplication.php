@@ -98,7 +98,7 @@ use Mindy\Locale\Translate;
  * @property string $homeUrl The homepage URL.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @package Mindy\Application
+ * @package system.base
  * @since 1.0
  */
 abstract class BaseApplication
@@ -783,7 +783,7 @@ abstract class BaseApplication
         if ($this->_params !== null) {
             return $this->_params;
         } else {
-            $this->_params = new Collection;
+            $this->_params = new Collection([]);
             return $this->_params;
         }
     }
@@ -834,143 +834,6 @@ abstract class BaseApplication
         if ($this->_stateChanged) {
             $this->_stateChanged = false;
             $this->statePersister->save($this->_globalState);
-        }
-    }
-
-    /**
-     * Handles uncaught PHP exceptions.
-     *
-     * This method is implemented as a PHP exception handler. It requires
-     * that constant YII_ENABLE_EXCEPTION_HANDLER be defined true.
-     *
-     * This method will first raise an {@link onException} event.
-     * If the exception is not handled by any event handler, it will call
-     * {@link getErrorHandler errorHandler} to process the exception.
-     *
-     * The application will be terminated by this method.
-     *
-     * @param Exception $exception exception that is not caught
-     */
-    public function handleException($exception)
-    {
-        // disable error capturing to avoid recursive errors
-        restore_error_handler();
-        restore_exception_handler();
-
-        $errorCode = 500;
-        $category = 'exception';
-        if ($exception instanceof HttpException) {
-            $errorCode = $exception->statusCode;
-            $category .= '.' . $exception->statusCode;
-        }
-        // php <5.2 doesn't support string conversion auto-magically
-        $message = $exception->__toString();
-        if (isset($_SERVER['REQUEST_URI'])) {
-            $message .= "\nREQUEST_URI=" . $_SERVER['REQUEST_URI'];
-        }
-        if (isset($_SERVER['HTTP_REFERER'])) {
-            $message .= "\nHTTP_REFERER=" . $_SERVER['HTTP_REFERER'];
-        }
-        $message .= "\n---";
-        Mindy::app()->logger->error($message, ['category' => $category], 'default');
-
-        try {
-            $this->signal->send($this, 'raiseException', $exception);
-            $this->displayException($exception);
-        } catch (Exception $e) {
-            $this->displayException($e);
-        }
-
-        try {
-            $this->end(1);
-        } catch (Exception $e) {
-            // use the most primitive way to log error
-            $msg = get_class($e) . ': ' . $e->getMessage() . ' (' . $e->getFile() . ':' . $e->getLine() . ")\n";
-            $msg .= $e->getTraceAsString() . "\n";
-            $msg .= "Previous exception:\n";
-            $msg .= get_class($exception) . ': ' . $exception->getMessage() . ' (' . $exception->getFile() . ':' . $exception->getLine() . ")\n";
-            $msg .= $exception->getTraceAsString() . "\n";
-            $msg .= '$_SERVER=' . var_export($_SERVER, true);
-            error_log($msg);
-            exit(1);
-        }
-    }
-
-    /**
-     * Handles PHP execution errors such as warnings, notices.
-     *
-     * This method is implemented as a PHP error handler. It requires
-     * that constant YII_ENABLE_ERROR_HANDLER be defined true.
-     *
-     * This method will first raise an {@link onError} event.
-     * If the error is not handled by any event handler, it will call
-     * {@link getErrorHandler errorHandler} to process the error.
-     *
-     * The application will be terminated by this method.
-     *
-     * @param integer $code the level of the error raised
-     * @param string $message the error message
-     * @param string $file the filename that the error was raised in
-     * @param integer $line the line number the error was raised at
-     */
-    public function handleError($code, $message, $file, $line)
-    {
-        if ($code & error_reporting()) {
-            // disable error capturing to avoid recursive errors
-            restore_error_handler();
-            restore_exception_handler();
-
-            $log = "$message ($file:$line)\nStack trace:\n";
-            $trace = debug_backtrace();
-            // skip the first 3 stacks as they do not tell the error position
-            if (count($trace) > 3) {
-                $trace = array_slice($trace, 3);
-            }
-            foreach ($trace as $i => $t) {
-                if (!isset($t['file'])) {
-                    $t['file'] = 'unknown';
-                }
-                if (!isset($t['line'])) {
-                    $t['line'] = 0;
-                }
-                if (!isset($t['function'])) {
-                    $t['function'] = 'unknown';
-                }
-                $log .= "#$i {$t['file']}({$t['line']}): ";
-                if (isset($t['object']) && is_object($t['object'])) {
-                    $log .= get_class($t['object']) . '->';
-                }
-                $log .= "{$t['function']}()\n";
-            }
-            if (isset($_SERVER['REQUEST_URI'])) {
-                $log .= 'REQUEST_URI=' . $_SERVER['REQUEST_URI'];
-            }
-            Mindy::app()->logger->error($log, 'default', ['category' => 'php']);
-
-            try {
-                $this->signal->send($this, 'raiseError', [
-                    'code' => $code,
-                    'message' => $message,
-                    'file' => $file,
-                    'line' => $line
-                ]);
-                $this->displayError($code, $message, $file, $line);
-            } catch (Exception $e) {
-                $this->displayException($e);
-            }
-
-            try {
-                $this->end(1);
-            } catch (Exception $e) {
-                // use the most primitive way to log error
-                $msg = get_class($e) . ': ' . $e->getMessage() . ' (' . $e->getFile() . ':' . $e->getLine() . ")\n";
-                $msg .= $e->getTraceAsString() . "\n";
-                $msg .= "Previous error:\n";
-                $msg .= $log . "\n";
-                $msg .= '$_SERVER=' . var_export($_SERVER, true);
-                error_log($msg);
-                exit(1);
-            }
         }
     }
 
