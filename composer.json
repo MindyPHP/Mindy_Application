@@ -1,7 +1,7 @@
 {
     "name": "mindy/application",
     "homepage": "https://github.com/studio107/Mindy_Application",
-    "version": "0.2",
+    "version": "0.2.1",
     "license": "BSD-3-Clause",
     "autoload": {
         "psr-4": {
