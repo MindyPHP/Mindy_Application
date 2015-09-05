@@ -934,6 +934,9 @@ abstract class BaseApplication
                     ],
                 ],
                 'formatters' => [
+                    'default' => [
+                        'class' => '\Bramus\Monolog\Formatter\ColoredLineFormatter',
+                    ],
                     'users' => [
                         'class' => '\Mindy\Logger\Formatters\LineFormatter',
                         'format' => "%datetime% %message%\n"

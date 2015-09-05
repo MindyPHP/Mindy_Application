@@ -260,6 +260,7 @@ class Application extends BaseApplication
     }
 
     /**
+     * TODO move to ErrorHandler
      * Displays the captured PHP error.
      * This method displays the error in console mode when there is
      * no active error handler.
@@ -367,8 +368,6 @@ class Application extends BaseApplication
             $this->_runner->commands = $this->commandMap;
             $this->_runner->addCommands($this->getCommandPath());
 
-            $this->_runner->addCommands(__DIR__ . '/../Commands');
-
             $env = @getenv('CONSOLE_COMMANDS');
             if (!empty($env)) {
                 $this->_runner->addCommands($env);
@@ -382,7 +381,7 @@ class Application extends BaseApplication
             }
         } else {
             // preload 'request' so that it has chance to respond to onBeginRequest event.
-            $this->request;
+            $this->getComponent('request');
         }
     }
 }
