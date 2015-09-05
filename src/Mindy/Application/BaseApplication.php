@@ -398,7 +398,7 @@ abstract class BaseApplication
         } elseif (isset($this->_moduleConfig[$id])) {
             $config = $this->_moduleConfig[$id];
             if (!isset($config['enabled']) || $config['enabled']) {
-                Mindy::app()->logger->info("Loading \"$id\" module", [], 'module');
+                Mindy::app()->logger->debug("Loading \"$id\" module", $config, 'module');
                 $class = $config['class'];
                 unset($config['class'], $config['enabled']);
                 if ($this === Mindy::app()) {
