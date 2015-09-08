@@ -149,6 +149,7 @@ class Application extends BaseApplication
             list($handler, $vars) = $route;
             if ($handler instanceof Closure) {
                 $handler->__invoke($this->getComponent('request'));
+                $this->end();
             } else {
                 list($className, $actionName) = $handler;
                 $controller = Creator::createObject($className, time(), $owner === $this ? null : $owner, $this->getComponent('request'));
