@@ -913,6 +913,9 @@ abstract class BaseApplication
             'session' => [
                 'class' => '\Mindy\Session\HttpSession',
             ],
+            'mail' => [
+                'class' => '\Mindy\Mail\Mailer',
+            ],
             'logger' => [
                 'class' => '\Mindy\Logger\LoggerManager',
                 'handlers' => [
