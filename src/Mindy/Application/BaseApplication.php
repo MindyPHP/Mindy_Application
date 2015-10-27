@@ -120,7 +120,9 @@ abstract class BaseApplication
     /**
      * @var string the class used to handle errors
      */
-    public $errorHandlerClass = '\Mindy\Base\ErrorHandler';
+    public $errorHandlerConfig = [
+        'class' => '\Mindy\Base\ErrorHandler'
+    ];
     /**
      * @var array
      */
@@ -204,12 +206,16 @@ abstract class BaseApplication
             unset($config['aliases']);
         }
 
-        $this->preinit();
-
+        if (isset($config['errorHandler'])) {
+            $this->errorHandlerConfig = array_merge($this->errorHandlerConfig, $config['errorHandler']);
+            unset($config['errorHandler']);
+        }
         $this->initSystemHandlers();
+        $this->preinit();
         $this->registerCoreComponents();
 
         $this->configure($config);
+
         $this->initTranslate();
         $this->attachBehaviors($this->behaviors);
         $this->preloadComponents();
@@ -838,41 +844,12 @@ abstract class BaseApplication
     }
 
     /**
-     * Raised when an uncaught PHP exception occurs.
-     *
-     * An event handler can set the {@link CExceptionEvent::handled handled}
-     * property of the event parameter to be true to indicate no further error
-     * handling is needed. Otherwise, the {@link getErrorHandler errorHandler}
-     * application component will continue processing the error.
-     *
-     * @param \Mindy\Exception\Exception $exception
-     */
-    public function raiseException(Exception $exception)
-    {
-    }
-
-    /**
-     * Raised when a PHP execution error occurs.
-     *
-     * An event handler can set the {@link CErrorEvent::handled handled}
-     * property of the event parameter to be true to indicate no further error
-     * handling is needed. Otherwise, the {@link getErrorHandler errorHandler}
-     * application component will continue processing the error.
-     *
-     * @param $error
-     */
-    public function raiseError($error)
-    {
-    }
-
-    /**
      * Initializes the error handlers.
      */
     protected function initSystemHandlers()
     {
         if (MINDY_ENABLE_EXCEPTION_HANDLER || MINDY_ENABLE_ERROR_HANDLER) {
-            $errorHandlerClass = $this->errorHandlerClass;
-            $handler = new $errorHandlerClass;
+            $handler = Creator::createObject($this->errorHandlerConfig);
             if (MINDY_ENABLE_EXCEPTION_HANDLER) {
                 set_exception_handler([$handler, 'handleException']);
             }
@@ -889,9 +866,6 @@ abstract class BaseApplication
     protected function registerCoreComponents()
     {
         $components = [
-            'errorHandler' => [
-                'class' => '\Mindy\Base\ErrorHandler',
-            ],
             'securityManager' => [
                 'class' => '\Mindy\Security\SecurityManager',
             ],
