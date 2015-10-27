@@ -86,6 +86,7 @@ class Application extends BaseApplication
      */
     public function getUser()
     {
+        /** @var \Modules\User\Components\Auth $auth */
         $auth = $this->getComponent('auth');
         if (!$auth) {
             throw new Exception("Auth component not initialized");
@@ -101,11 +102,16 @@ class Application extends BaseApplication
     public function runController($route)
     {
         if (($ca = $this->createController($route)) !== null) {
+            /** @var \Mindy\Controller\BaseController $controller */
             list($controller, $actionID, $params) = $ca;
             $_GET = array_merge($_GET, $params);
             $csrfExempt = $controller->getCsrfExempt();
-            if(!Console::isCli() && !in_array($actionID, $csrfExempt) && $this->getComponent('request')->enableCsrfValidation) {
-                $this->getComponent('request')->csrf->validate();
+            if (Console::isCli() === false && in_array($actionID, $csrfExempt) === false) {
+                /** @var \Mindy\Http\Request $request */
+                $request = $this->getComponent('request');
+                if ($request->enableCsrfValidation) {
+                    $request->csrf->validate();
+                }
             }
             $oldController = $this->_controller;
             $this->_controller = $controller;
