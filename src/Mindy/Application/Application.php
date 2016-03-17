@@ -60,7 +60,9 @@ class Application extends BaseApplication
      */
     public function processRequest()
     {
-        $this->signal->send($this, 'onProcessRequest');
+        if ($this->hasComponent('signal')) {
+            $this->signal->send($this, 'onProcessRequest');
+        }
 
         if (Console::isCli()) {
             $exitCode = $this->_runner->run($_SERVER['argv']);
@@ -77,7 +79,7 @@ class Application extends BaseApplication
      */
     public function parseRoute()
     {
-        return $this->getUrlManager()->parseUrl($this->getRequest());
+        return $this->urlmanager->parseUrl($this->request);
     }
 
     /**
@@ -96,7 +98,7 @@ class Application extends BaseApplication
 
     /**
      * Creates the controller and performs the specified action.
-     * @param string $route the route of the current request. See {@link createController} for more details.
+     * @param \Mindy\Router\Route $route the route of the current request. See {@link createController} for more details.
      * @throws HttpException if the controller could not be created.
      */
     public function runController($route)
@@ -116,12 +118,30 @@ class Application extends BaseApplication
             $oldController = $this->_controller;
             $this->_controller = $controller;
             $controller->init();
+            ob_start();
             $controller->run($actionID, $params);
+            $this->processMiddleware(ob_get_clean());
             $this->_controller = $oldController;
         } else {
             throw new HttpException(404, Mindy::t('base', 'Unable to resolve the request "{route}".', [
                 '{route}' => $this->request->getPath()
             ]));
+        }
+    }
+
+    /**
+     * @param $out
+     */
+    protected function processMiddleware($out)
+    {
+        if ($this->hasComponent('middleware')) {
+            /** @var \Mindy\Middleware\MiddlewareManager $middleware */
+            $middleware = $this->getComponent('middleware');
+            $out = $middleware->processView($this->request, $out);
+            $middleware->processResponse($this->request);
+            echo $out;
+        } else {
+            echo $out;
         }
     }
 
