@@ -79,7 +79,7 @@ class Application extends BaseApplication
      */
     public function parseRoute()
     {
-        return $this->urlmanager->parseUrl($this->request);
+        return $this->urlManager->parseUrl($this->request);
     }
 
     /**
@@ -194,7 +194,7 @@ class Application extends BaseApplication
     protected function parseActionParams($pathInfo)
     {
         if (($pos = strpos($pathInfo, '/')) !== false) {
-            $manager = $this->getUrlManager();
+            $manager = $this->urlManager;
             $manager->parsePathInfo((string)substr($pathInfo, $pos + 1));
             $actionID = substr($pathInfo, 0, $pos);
             return $manager->caseSensitive ? $actionID : strtolower($actionID);
