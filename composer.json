@@ -1,9 +1,9 @@
 {
   "name": "mindy/application",
   "homepage": "https://github.com/studio107/Mindy_Application",
-  "version": "0.2.2",
+  "version": "1.0",
   "type": "library",
-  "license": "BSD-3-Clause",
+  "license": "BSD",
   "autoload": {
     "psr-4": {
       "Mindy\\Application\\": "src/Mindy/Application"
@@ -11,19 +11,19 @@
   },
   "require": {
     "php": ">=5.4",
-    "mindy/exception": "0.*",
-    "mindy/di": "0.*",
-    "mindy/helper": "0.*",
-    "mindy/console": "0.*",
-    "mindy/locale": "0.*",
-    "mindy/controller": "0.*",
-    "mindy/http": "0.*",
-    "mindy/middleware": "0.*",
-    "mindy/logger": "1.*",
-    "mindy/router": "0.*",
-    "mindy/event": "0.*",
-    "mindy/security": "0.*",
-    "mindy/session": "0.*"
+    "mindy/exception": "*",
+    "mindy/di": "*",
+    "mindy/helper": "*",
+    "mindy/console": "*",
+    "mindy/locale": "*",
+    "mindy/controller": "*",
+    "mindy/http": "*",
+    "mindy/middleware": "*",
+    "mindy/logger": "*",
+    "mindy/router": "*",
+    "mindy/event": "*",
+    "mindy/security": "*",
+    "mindy/session": "*"
   },
   "require-dev": {
     "satooshi/php-coveralls": "dev-master"
