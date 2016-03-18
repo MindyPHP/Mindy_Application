@@ -200,10 +200,6 @@ abstract class BaseApplication extends ServiceLocator
             unset($config['aliases']);
         }
 
-        if (isset($config['errorHandler'])) {
-            $this->errorHandlerConfig = array_merge($this->errorHandlerConfig, $config['errorHandler']);
-            unset($config['errorHandler']);
-        }
         $this->initSystemHandlers();
         $this->preinit();
         $this->registerCoreComponents();
