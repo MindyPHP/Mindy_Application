@@ -14,16 +14,15 @@
 
 namespace Mindy\Application;
 
-use Mindy\Base\Interfaces\IApplicationComponent;
 use Mindy\Base\Mindy;
 use Mindy\Base\Module;
 use Mindy\Di\ServiceLocator;
 use Mindy\Exception\Exception;
-use Mindy\Exception\HttpException;
 use Mindy\Helper\Alias;
-use Mindy\Helper\Collection;
+//use Mindy\Helper\Collection;
 use Mindy\Helper\Creator;
-use Mindy\Helper\Traits\BehaviorAccessors;
+//use Mindy\Helper\Params;
+use Mindy\Helper\Traits\Accessors;
 use Mindy\Helper\Traits\Configurator;
 use Mindy\Locale\Translate;
 
@@ -101,9 +100,9 @@ use Mindy\Locale\Translate;
  * @package system.base
  * @since 1.0
  */
-abstract class BaseApplication
+abstract class BaseApplication extends ServiceLocator
 {
-    use Configurator, BehaviorAccessors;
+    use Configurator, Accessors;
 
     /**
      * @var array
@@ -144,11 +143,6 @@ abstract class BaseApplication
     private $_modules = [];
     private $_moduleConfig = [];
     private $_componentConfig = [];
-
-    /**
-     * @var \Mindy\Di\ServiceLocator
-     */
-    private $_locator;
 
     /**
      * Processes the request.
@@ -217,7 +211,6 @@ abstract class BaseApplication
         $this->configure($config);
 
         $this->initTranslate();
-        $this->attachBehaviors($this->behaviors);
         $this->preloadComponents();
 
         $this->initEvents();
@@ -226,14 +219,10 @@ abstract class BaseApplication
         $this->init();
     }
 
-    public function getLocator()
-    {
-        if ($this->_locator === null) {
-            $this->_locator = new ServiceLocator();
-        }
-        return $this->_locator;
-    }
-
+    /**
+     * Init modules
+     * Before run application call preConfigure for all modules
+     */
     protected function initModules()
     {
         foreach ($this->getModules() as $module => $config) {
@@ -244,6 +233,33 @@ abstract class BaseApplication
                 $className = $config['class'];
             }
             call_user_func([$className, 'preConfigure']);
+        }
+
+        // Collect params
+        $this->collectParams([Alias::get('Modules')]);
+    }
+
+    /**
+     * @param array $paths
+     * @return array
+     */
+    protected function collectParams(array $paths)
+    {
+        foreach ($paths as $path) {
+            if (!is_dir($path)) {
+                continue;
+            }
+
+            $files = glob($path . '/*/config/params.php');
+            if (is_array($files)) {
+                foreach ($files as $file) {
+                    $temp = include_once($file);
+                    if (is_array($temp) && !empty($temp)) {
+                        $module = str_replace('/config/params.php', '', str_replace($path . '/', '', $file));
+                        $this->setParams([$module => $temp]);
+                    }
+                }
+            }
         }
     }
 
@@ -278,27 +294,27 @@ abstract class BaseApplication
         if (!is_string($id)) {
             $id = array_shift($id);
         }
-        return $this->getLocator()->has($id);
+        return $this->has($id);
     }
 
     /**
      * Retrieves the named application component.
      * @param string $id application component ID (case-sensitive)
      * @param boolean $createIfNull whether to create the component if it doesn't exist yet.
-     * @return IApplicationComponent the application component instance, null if the application component is disabled or does not exist.
+     * @return mixed the application component instance, null if the application component is disabled or does not exist.
      * @see hasComponent
      */
     public function getComponent($id, $createIfNull = true)
     {
         if ($this->hasComponent($id)) {
-            return $this->getLocator()->get($id);
+            return $this->get($id);
         } elseif (isset($this->_componentConfig[$id]) && $createIfNull) {
             $config = $this->_componentConfig[$id];
             if (!isset($config['enabled']) || $config['enabled']) {
                 Mindy::app()->logger->debug("Loading \"$id\" application component", [], 'di');
                 unset($config['enabled']);
                 $component = Creator::createObject($config);
-                $this->getLocator()->set($id, $component);
+                $this->set($id, $component);
                 return $component;
             }
         }
@@ -309,7 +325,7 @@ abstract class BaseApplication
      * The component will be initialized by calling its {@link CApplicationComponent::init() init()}
      * method if it has not done so.
      * @param string $id component ID
-     * @param array|IApplicationComponent $component application component
+     * @param array $component application component
      * (either configuration array or instance). If this parameter is null,
      * component will be unloaded from the module.
      * @param boolean $merge whether to merge the new component configuration
@@ -321,26 +337,24 @@ abstract class BaseApplication
     public function setComponent($id, $component, $merge = true)
     {
         if ($component === null) {
-            $this->getLocator()->clear($id);
+            $this->clear($id);
             return;
-        } elseif ($component instanceof IApplicationComponent) {
-            $this->getLocator()->set($id, $component);
-            return;
-        } elseif ($this->getLocator()->has($id)) {
-            if (isset($component['class']) && get_class($this->getLocator()->get($id)) !== $component['class']) {
-                $this->getLocator()->clear($id);
+        } elseif ($this->has($id)) {
+            if (isset($component['class']) && get_class($this->get($id)) !== $component['class']) {
+                $this->clear($id);
                 $this->_componentConfig[$id] = $component; //we should ignore merge here
                 return;
             }
 
-            Creator::configure($this->getLocator()->get($id), $component);
+            Creator::configure($this->get($id), $component);
         } elseif (isset($this->_componentConfig[$id]['class'], $component['class']) && $this->_componentConfig[$id]['class'] !== $component['class']) {
             $this->_componentConfig[$id] = $component; //we should ignore merge here
             return;
         }
 
         if (isset($this->_componentConfig[$id]) && $merge) {
-            $this->_componentConfig[$id] = Collection::mergeArray($this->_componentConfig[$id], $component);
+//            $this->_componentConfig[$id] = Collection::mergeArray($this->_componentConfig[$id], $component);
+            $this->_componentConfig[$id] = array_merge_recursive($this->_componentConfig[$id], $component);
         } else {
             $this->_componentConfig[$id] = $component;
         }
@@ -356,7 +370,7 @@ abstract class BaseApplication
      */
     public function getComponents($loadedOnly = true)
     {
-        return $this->getLocator()->getComponents(!$loadedOnly);
+        return $this->getComponents(!$loadedOnly);
     }
 
     /**
@@ -476,7 +490,8 @@ abstract class BaseApplication
             }
 
             if (isset($this->_moduleConfig[$id])) {
-                $this->_moduleConfig[$id] = Collection::mergeArray($this->_moduleConfig[$id], $module);
+//                $this->_moduleConfig[$id] = Collection::mergeArray($this->_moduleConfig[$id], $module);
+                $this->_moduleConfig[$id] = array_merge_recursive($this->_moduleConfig[$id], $module);
             } else {
                 $this->_moduleConfig[$id] = $module;
             }
@@ -513,10 +528,10 @@ abstract class BaseApplication
         if (empty($args) && strpos($name, 'get') === 0) {
             $tmp = str_replace('get', '', $name);
 
-            if ($this->getLocator()->has($tmp)) {
-                return $this->getLocator()->get($tmp);
-            } elseif ($this->getLocator()->has(lcfirst($tmp))) {
-                return $this->getLocator()->get(lcfirst($tmp));
+            if ($this->has($tmp)) {
+                return $this->get($tmp);
+            } elseif ($this->has(lcfirst($tmp))) {
+                return $this->get(lcfirst($tmp));
             }
         }
 
@@ -525,8 +540,8 @@ abstract class BaseApplication
 
     public function __get($name)
     {
-        if ($this->getLocator()->has($name)) {
-            return $this->getLocator()->get($name);
+        if ($this->has($name)) {
+            return $this->get($name);
         } else {
             return $this->__getInternal($name);
         }
@@ -782,27 +797,21 @@ abstract class BaseApplication
 
     /**
      * Returns user-defined parameters.
-     * @return \Mindy\Helper\Collection the list of user-defined parameters
+     * @return array the list of user-defined parameters
      */
     public function getParams()
     {
-        if ($this->_params !== null) {
-            return $this->_params;
-        } else {
-            $this->_params = new Collection([]);
-            return $this->_params;
-        }
+        return $this->_params;
     }
 
     /**
      * Sets user-defined parameters.
      * @param array $value user-defined parameters. This should be in name-value pairs.
      */
-    public function setParams($value)
+    public function setParams(array $value)
     {
-        $params = $this->getParams();
         foreach ($value as $k => $v) {
-            $params->add($k, $v);
+            $this->_params[$k] = $v;
         }
     }
 
@@ -929,12 +938,5 @@ abstract class BaseApplication
         ];
 
         $this->setComponents($components);
-    }
-
-    public function setComponents($components, $merge = true)
-    {
-        foreach ($components as $name => $component) {
-            $this->getLocator()->set($name, $component);
-        }
     }
 }
