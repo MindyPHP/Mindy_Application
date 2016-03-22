@@ -1,6 +1,6 @@
 {
   "name": "mindy/application",
-  "homepage": "https://github.com/studio107/Mindy_Application",
+  "homepage": "https://github.com/MindyPHP/Mindy_Application",
   "version": "1.0",
   "type": "library",
   "license": "BSD",
@@ -37,6 +37,6 @@
     }
   ],
   "support": {
-    "issues": "https://github.com/studio107/Mindy_Application/issues?state=open"
+    "issues": "https://github.com/MindyPHP/Mindy_Application/issues?state=open"
   }
 }
