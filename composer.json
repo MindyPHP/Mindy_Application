@@ -9,20 +9,7 @@
     }
   },
   "require": {
-    "php": ">=5.4",
-    "mindy/exception": "*",
-    "mindy/di": "*",
-    "mindy/helper": "*",
-    "mindy/console": "*",
-    "mindy/locale": "*",
-    "mindy/controller": "*",
-    "mindy/http": "*",
-    "mindy/middleware": "*",
-    "mindy/logger": "*",
-    "mindy/router": "*",
-    "mindy/event": "*",
-    "mindy/security": "*",
-    "mindy/session": "*"
+    "php": ">=5.4"
   },
   "require-dev": {
     "satooshi/php-coveralls": "dev-master"
