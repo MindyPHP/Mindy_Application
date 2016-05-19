@@ -403,7 +403,7 @@ class Application extends BaseApplication
             foreach ($this->modules as $name => $settings) {
                 $modulePath = Alias::get("Modules." . $name . ".Commands");
                 if ($modulePath) {
-                    $this->_runner->addCommands($modulePath);
+                    $this->_runner->addCommands($modulePath, $name);
                 }
             }
         } else {
