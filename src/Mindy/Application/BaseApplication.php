@@ -200,7 +200,7 @@ abstract class BaseApplication extends ServiceLocator
             unset($config['aliases']);
         }
 
-        $this->initSystemHandlers();
+        $this->initSystemHandlers(isset($config['errorHandlerConfig']) ? $config['errorHandlerConfig'] : $this->errorHandlerConfig);
         $this->preinit();
         $this->registerCoreComponents();
 
@@ -851,10 +851,10 @@ abstract class BaseApplication extends ServiceLocator
     /**
      * Initializes the error handlers.
      */
-    protected function initSystemHandlers()
+    protected function initSystemHandlers(array $config = [])
     {
         if (MINDY_ENABLE_EXCEPTION_HANDLER || MINDY_ENABLE_ERROR_HANDLER) {
-            $handler = Creator::createObject($this->errorHandlerConfig);
+            $handler = Creator::createObject($config);
             if (MINDY_ENABLE_EXCEPTION_HANDLER) {
                 set_exception_handler([$handler, 'handleException']);
             }
