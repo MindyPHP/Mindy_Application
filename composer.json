@@ -5,11 +5,16 @@
   "license": "BSD",
   "autoload": {
     "psr-4": {
-      "Mindy\\Application\\": "src/Mindy/Application"
+      "Mindy\\Application\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Mindy\\Application\\": "test/"
     }
   },
   "require": {
-    "php": ">=5.4"
+    "php": ">=5.6"
   },
   "require-dev": {
     "satooshi/php-coveralls": "dev-master"
@@ -23,6 +28,6 @@
     }
   ],
   "support": {
-    "issues": "https://github.com/MindyPHP/Mindy_Application/issues?state=open"
+    "issues": "https://github.com/MindyPHP/Mindy/issues?state=open"
   }
 }
