@@ -917,7 +917,7 @@ abstract class BaseApplication extends ServiceLocator
                 ],
                 'formatters' => [
                     'default' => [
-                        'class' => '\Bramus\Monolog\Formatter\ColoredLineFormatter',
+                        'class' => '\Mindy\Logger\Formatters\LineFormatter',
                     ],
                     'users' => [
                         'class' => '\Mindy\Logger\Formatters\LineFormatter',
