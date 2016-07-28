@@ -82,12 +82,12 @@ use Mindy\Locale\Translate;
  * @property string $runtimePath The directory that stores runtime files. Defaults to 'protected/runtime'.
  * @property string $extensionPath The directory that contains all extensions. Defaults to the 'extensions' directory under 'protected'.
  * @property string $timeZone The time zone used by this application.
- * @property \Mindy\Query\Connection $db The database connection.
+ * @property \Mindy\Query\ConnectionManager $db The database connection.
  * @property \Mindy\Base\ErrorHandler $errorHandler The error handler application component.
  * @property \Mindy\Security\SecurityManager $securityManager The security manager application component.
  * @property \Mindy\Base\StatePersister $statePersister The state persister application component.
  * @property \Mindy\Cache\Cache $cache The cache application component. Null if the component is not enabled.
- * @property \Mindy\Mail\Mailer $mail The mail application component. Null if the component is not enabled.
+ * @property \Mindy\Mail\Mailer|\Modules\Mail\Components\DbMailer $mail The mail application component. Null if the component is not enabled.
  * @property \Mindy\Locale\Translate $translate The application translate component.
  * @property \Mindy\Http\Request $request The request component.
  * @property \Mindy\Template\Renderer $template The template engine component.
