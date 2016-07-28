@@ -911,9 +911,6 @@ abstract class BaseApplication extends ServiceLocator
                         'level' => 'INFO',
                         'formatter' => 'users'
                     ],
-                    'mail_admins' => [
-                        'class' => '\Mindy\Logger\Handler\SwiftMailerHandler',
-                    ],
                 ],
                 'formatters' => [
                     'default' => [
